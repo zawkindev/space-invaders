@@ -11,7 +11,7 @@ type Cordinate struct {
 	X, Y int
 }
 
-type Position struct {
+type position struct {
 	Top         Cordinate
 	Bottom      Cordinate
 	Right       Cordinate
@@ -23,7 +23,27 @@ type Position struct {
 	BottomLeft  Cordinate
 }
 
-func ScreenSize() Cordinate {
+var Position position
+var Width, Height, MaxX, MaxY int
+
+func init() {
+	Width, Height = ScreenSize()
+  MaxX, MaxY = Width/2, Height/2
+
+	Position = position{
+		Top:    Cordinate{X: 0, Y: MaxY},
+		Bottom:    Cordinate{X: 0, Y: -MaxY},
+		Right:    Cordinate{X: MaxX, Y: 0},
+    Left: Cordinate{X: -MaxX, Y: 0},
+		Center: Cordinate{X: 0, Y: 0},
+    TopRight: Cordinate{X: MaxX, Y: MaxY},
+    TopLeft: Cordinate{X: -MaxX, Y: MaxY},
+    BottomRight: Cordinate{X: MaxX, Y: -MaxY},
+    BottomLeft: Cordinate{X: -MaxX, Y: -MaxY},
+	}
+}
+
+func ScreenSize() (int, int) {
 	cmd := exec.Command("stty", "size")
 	cmd.Stdin = os.Stdin
 	out, err := cmd.Output()
@@ -31,19 +51,19 @@ func ScreenSize() Cordinate {
 		log.Fatal(err)
 	}
 
-	var cor Cordinate
 	var temp string = ""
+	var width, height int
 
 	for _, b := range out {
 		switch {
 		case b == ' ':
-			cor.X, err = strconv.Atoi(temp)
+			width, err = strconv.Atoi(temp)
 			if err != nil {
 				log.Fatal(err)
 			}
 			temp = ""
 		case b == '\n':
-			cor.Y, err = strconv.Atoi(temp)
+			height, err = strconv.Atoi(temp)
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -52,5 +72,5 @@ func ScreenSize() Cordinate {
 		}
 	}
 
-	return cor
+	return width, height
 }
