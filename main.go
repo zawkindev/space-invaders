@@ -2,17 +2,17 @@ package main
 
 import (
 	"fmt"
-	c "space-invaders/console"
+	s "space-invaders/screen"
 )
 
-var Position c.Position
+var Position s.Position
 
 func init() {
-	Position = c.Position{
-		Center: c.Cordinate{X: 0, Y: 0},
+	Position = s.Position{
+		Center: s.Cordinate{X: 0, Y: 0},
 	}
 }
 
 func main() {
-	fmt.Println("Screen size: ", c.ScreenSize())
+	fmt.Println("Ss.een size: ", s.ScreenSize())
 }
