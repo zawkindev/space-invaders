@@ -1,6 +1,7 @@
 package console
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"os/exec"
@@ -23,23 +24,28 @@ type position struct {
 	BottomLeft  Cordinate
 }
 
+type Model struct {
+	Cordinate Cordinate
+	View      string
+}
+
 var Position position
 var Width, Height, MaxX, MaxY int
 
 func init() {
 	Width, Height = ScreenSize()
-  MaxX, MaxY = Width/2, Height/2
+	MaxX, MaxY = Width/2, Height/2
 
 	Position = position{
-		Top:    Cordinate{X: 0, Y: MaxY},
-		Bottom:    Cordinate{X: 0, Y: -MaxY},
-		Right:    Cordinate{X: MaxX, Y: 0},
-    Left: Cordinate{X: -MaxX, Y: 0},
-		Center: Cordinate{X: 0, Y: 0},
-    TopRight: Cordinate{X: MaxX, Y: MaxY},
-    TopLeft: Cordinate{X: -MaxX, Y: MaxY},
-    BottomRight: Cordinate{X: MaxX, Y: -MaxY},
-    BottomLeft: Cordinate{X: -MaxX, Y: -MaxY},
+		Top:         Cordinate{X: 0, Y: MaxY},
+		Bottom:      Cordinate{X: 0, Y: -MaxY},
+		Right:       Cordinate{X: MaxX, Y: 0},
+		Left:        Cordinate{X: -MaxX, Y: 0},
+		Center:      Cordinate{X: 0, Y: 0},
+		TopRight:    Cordinate{X: MaxX, Y: MaxY},
+		TopLeft:     Cordinate{X: -MaxX, Y: MaxY},
+		BottomRight: Cordinate{X: MaxX, Y: -MaxY},
+		BottomLeft:  Cordinate{X: -MaxX, Y: -MaxY},
 	}
 }
 
@@ -73,4 +79,20 @@ func ScreenSize() (int, int) {
 	}
 
 	return width, height
+}
+
+func convertCor(cor Cordinate) Cordinate {
+	var newCor Cordinate
+
+	newCor.X = Width - (MaxX - cor.X)
+	newCor.Y = Height - (MaxY + cor.Y)
+
+	return newCor
+}
+
+func Render(m Model) {
+	cor := convertCor(m.Cordinate)
+
+	fmt.Println("old cordinate: ", m.Cordinate)
+	fmt.Println("new cordinate: ", cor)
 }

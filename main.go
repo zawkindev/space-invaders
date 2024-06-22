@@ -5,9 +5,8 @@ import (
 	s "space-invaders/screen"
 )
 
-
-
 func main() {
+	helloText := s.Model{Cordinate: s.Position.Center, View: "hello"}
 	fmt.Printf("width: %d, height: %d\n", s.Width, s.Height)
-  fmt.Println(s.Position.Bottom)
+  s.Render(helloText)
 }
