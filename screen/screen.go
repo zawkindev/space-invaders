@@ -63,13 +63,13 @@ func ScreenSize() (int, int) {
 	for _, b := range out {
 		switch {
 		case b == ' ':
-			width, err = strconv.Atoi(temp)
+			height, err = strconv.Atoi(temp)
 			if err != nil {
 				log.Fatal(err)
 			}
 			temp = ""
 		case b == '\n':
-			height, err = strconv.Atoi(temp)
+			width, err = strconv.Atoi(temp)
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -81,18 +81,41 @@ func ScreenSize() (int, int) {
 	return width, height
 }
 
-func convertCor(cor Cordinate) Cordinate {
+func convertCor(m Model) Cordinate {
 	var newCor Cordinate
 
-	newCor.X = Width - (MaxX - cor.X)
+	mWidth := Width - len(m.View)/2
+	cor := m.Cordinate
+	newCor.X = mWidth - (MaxX - cor.X)
 	newCor.Y = Height - (MaxY + cor.Y)
 
 	return newCor
 }
 
-func Render(m Model) {
-	cor := convertCor(m.Cordinate)
+func clearScreen() {
+	cmd := *exec.Command("clear")
+	cmd.Stdout = os.Stdout
+	err := cmd.Run()
+	if err != nil {
+		log.Fatal(err)
+	}
+}
 
-	fmt.Println("old cordinate: ", m.Cordinate)
-	fmt.Println("new cordinate: ", cor)
+func Render(m Model) {
+	cor := convertCor(m)
+	clearScreen()
+
+	for row := 0; row < Height; row++ {
+		if row == cor.Y {
+			for col := 0; col < Width; col++ {
+				if col == cor.X {
+					fmt.Print(m.View)
+					continue
+				}
+				fmt.Print(" ")
+			}
+			continue
+		}
+		fmt.Print("\n")
+	}
 }
