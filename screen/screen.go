@@ -29,6 +29,25 @@ type Model struct {
 	View      string
 }
 
+func (m *Model) constructor() {
+	viewWidth := Width - len(m.View)/2
+	viewHeight := func() int {
+		var n int
+		for _, b := range m.View {
+			if b == '\n' {
+				n++
+			}
+		}
+		if n == 0 {
+			return 1
+		}
+		return n
+	}()
+
+	m.Cordinate.X = viewWidth - (MaxX - m.Cordinate.X)
+	m.Cordinate.Y = viewHeight - (MaxY + m.Cordinate.Y)
+}
+
 var Position position
 var Width, Height, MaxX, MaxY int
 
@@ -81,17 +100,6 @@ func ScreenSize() (int, int) {
 	return width, height
 }
 
-func convertCor(m Model) Cordinate {
-	var newCor Cordinate
-
-	mWidth := Width - len(m.View)/2
-	cor := m.Cordinate
-	newCor.X = mWidth - (MaxX - cor.X)
-	newCor.Y = Height - (MaxY + cor.Y)
-
-	return newCor
-}
-
 func clearScreen() {
 	cmd := *exec.Command("clear")
 	cmd.Stdout = os.Stdout
@@ -101,21 +109,25 @@ func clearScreen() {
 	}
 }
 
-func Render(m Model) {
-	cor := convertCor(m)
+func Render(m ...Model) {
 	clearScreen()
 
-	for row := 0; row < Height; row++ {
-		if row == cor.Y {
-			for col := 0; col < Width; col++ {
-				if col == cor.X {
-					fmt.Print(m.View)
-					continue
-				}
-				fmt.Print(" ")
-			}
-			continue
-		}
-		fmt.Print("\n")
+	for _, el := range m {
+		el.constructor()
 	}
+
+	//
+	// for row := 0; row < Height; row++ {
+	// 	if row == cor.Y {
+	// 		for col := 0; col < Width; col++ {
+	// 			if col == cor.X {
+	// 				fmt.Print(m.View)
+	// 				continue
+	// 			}
+	// 			fmt.Print(" ")
+	// 		}
+	// 		continue
+	// 	}
+	// 	fmt.Print("\n")
+	// }
 }
