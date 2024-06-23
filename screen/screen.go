@@ -109,6 +109,42 @@ func clearScreen() {
 	}
 }
 
+func selectionSort(sli []Model, mode string) {
+	switch mode {
+	case "y":
+		for i := 0; i < len(sli); i++ {
+			min := sli[i].Cordinate.Y
+
+			for j := i; j < len(sli)-i; j++ {
+				current := sli[j].Cordinate.Y
+
+				if current < min {
+					temp := sli[i]
+					sli[i] = sli[j]
+					sli[j] = temp
+				}
+
+			}
+		}
+	case "x":
+		for i := 0; i < len(sli); i++ {
+			min := sli[i].Cordinate.X
+
+			for j := i; j < len(sli)-i; j++ {
+				current := sli[j].Cordinate.X
+
+				if current < min {
+					temp := sli[i]
+					sli[i] = sli[j]
+					sli[j] = temp
+				}
+
+			}
+		}
+	}
+
+}
+
 func Render(m ...Model) {
 	clearScreen()
 
@@ -116,7 +152,8 @@ func Render(m ...Model) {
 		el.constructor()
 	}
 
-	//
+
+
 	// for row := 0; row < Height; row++ {
 	// 	if row == cor.Y {
 	// 		for col := 0; col < Width; col++ {
