@@ -119,43 +119,41 @@ func swap(a, b *Model) {
 	*a, *b = *b, *a
 }
 
-func selectionSort(sli *[]Model) {
-	for i := 0; i < len(*sli); i++ {
-		min := (*sli)[i].Cordinate
-		for j := i; j < len(*sli)-i; j++ {
-			current := (*sli)[j].Cordinate
-			if current.Y < min.Y || (min.Y == current.Y && current.X < min.X) {
-				swap(&(*sli)[i], &(*sli)[j])
+func printScreen(matrix *[][]string) {
+	m := *matrix
+	var screen string
+
+	for i := 0; i < Height; i++ {
+		for j := 0; j < Width; j++ {
+			if j == Width-1 {
+				screen += "\n"
+				continue
 			}
+			screen += m[i][j]
 		}
 	}
+
+	fmt.Print(screen)
+
 }
 
 func Render(models ...Model) {
 	clearScreen()
 
+	matrix := make([][]string, Height)
+	for i := range matrix {
+		matrix[i] = make([]string, Width)
+	}
+
+	for i := 0; i < Height; i++ {
+		for j := 0; j < Width; j++ {
+			matrix[i][j] = "."
+		}
+	}
+
 	for _, el := range models {
 		el.constructor()
 	}
 
-	selectionSort(&models)
-
-	for i := 0; i < len(models); i++ {
-		m := models[i]
-		cor := m.Cordinate
-		for row := 0; row < Height; row++ {
-			if row == cor.Y {
-				for col := 0; col < Width; col++ {
-					if col == cor.X {
-						fmt.Print(m.View)
-						continue
-					}
-					fmt.Print(" ")
-				}
-				continue
-			}
-			fmt.Print("\n")
-		}
-	}
-
+	printScreen(&matrix)
 }
