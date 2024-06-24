@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"runtime"
 	"strconv"
 )
 
@@ -101,7 +102,12 @@ func ScreenSize() (int, int) {
 }
 
 func clearScreen() {
-	cmd := *exec.Command("clear")
+	var cmd *exec.Cmd
+	if runtime.GOOS == "windows" {
+		cmd = exec.Command("cls")
+	} else {
+		cmd = exec.Command("clear")
+	}
 	cmd.Stdout = os.Stdout
 	err := cmd.Run()
 	if err != nil {
@@ -109,40 +115,21 @@ func clearScreen() {
 	}
 }
 
-func selectionSort(sli []Model, mode string) {
-	switch mode {
-	case "y":
-		for i := 0; i < len(sli); i++ {
-			min := sli[i].Cordinate.Y
+func swap(a, b *Model) {
+	*a, *b = *b, *a
+}
 
-			for j := i; j < len(sli)-i; j++ {
-				current := sli[j].Cordinate.Y
-
-				if current < min {
-					temp := sli[i]
-					sli[i] = sli[j]
-					sli[j] = temp
-				}
-
+func selectionSort(sli *[]Model, mode string) {
+	for i := 0; i < len(*sli); i++ {
+		min := (*sli)[i].Cordinate.Y
+		for j := i; j < len(*sli)-i; j++ {
+			current := (*sli)[j].Cordinate.Y
+			if current < min {
+				swap(&(*sli)[i], &(*sli)[j])
 			}
-		}
-	case "x":
-		for i := 0; i < len(sli); i++ {
-			min := sli[i].Cordinate.X
 
-			for j := i; j < len(sli)-i; j++ {
-				current := sli[j].Cordinate.X
-
-				if current < min {
-					temp := sli[i]
-					sli[i] = sli[j]
-					sli[j] = temp
-				}
-
-			}
 		}
 	}
-
 }
 
 func Render(m ...Model) {
@@ -151,8 +138,6 @@ func Render(m ...Model) {
 	for _, el := range m {
 		el.constructor()
 	}
-
-
 
 	// for row := 0; row < Height; row++ {
 	// 	if row == cor.Y {
