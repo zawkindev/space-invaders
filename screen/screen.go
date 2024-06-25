@@ -49,6 +49,11 @@ func (m *Model) constructor() {
 	m.Cordinate.Y = viewHeight - (MaxY + m.Cordinate.Y)
 }
 
+type line struct {
+	Contents  []byte
+	hasObject bool
+}
+
 var Position position
 var Width, Height, MaxX, MaxY int
 
@@ -115,21 +120,17 @@ func clearScreen() {
 	}
 }
 
-func swap(a, b *Model) {
-	*a, *b = *b, *a
-}
-
-func printScreen(matrix *[][]string) {
+func printScreen(matrix *[]line) {
 	m := *matrix
 	var screen string
 
 	for i := 0; i < Height; i++ {
 		for j := 0; j < Width; j++ {
 			if j == Width-1 {
-				screen += "\n"
+				screen += string('\n')
 				continue
 			}
-			screen += m[i][j]
+			screen += string(m[i].Contents[j])
 		}
 	}
 
@@ -140,15 +141,9 @@ func printScreen(matrix *[][]string) {
 func Render(models ...Model) {
 	clearScreen()
 
-	matrix := make([][]string, Height)
+	matrix := make([]line, Height)
 	for i := range matrix {
-		matrix[i] = make([]string, Width)
-	}
-
-	for i := 0; i < Height; i++ {
-		for j := 0; j < Width; j++ {
-			matrix[i][j] = "."
-		}
+		matrix[i].Contents = make([]byte, Width)
 	}
 
 	for _, el := range models {
