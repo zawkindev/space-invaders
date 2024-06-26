@@ -163,7 +163,7 @@ func Render(models ...Model) {
 			matrix[row].hasObject = true
 			for j := 0; j < m.Width; j++ {
 				column := m.Cordinate.X - m.Width/2 + j
-				matrix[row].Columns[column] = '.'
+				matrix[row].Columns[column] = m.View[j]
 			}
 		}
 	}
