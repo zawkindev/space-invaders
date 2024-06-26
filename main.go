@@ -6,13 +6,11 @@ import (
 )
 
 func main() {
-	models := make([]s.Model, 0)
 	helloText := s.Model{Cordinate: s.Position.Center, View: "hello"}
-	models = append(models, helloText)
-	s.Render(helloText)
 
 	for {
 		time.Sleep(16 * time.Millisecond) // 60 fps = 1:60
 		s.Render(helloText)
 	}
+
 }
