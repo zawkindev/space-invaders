@@ -28,11 +28,13 @@ type position struct {
 type Model struct {
 	Cordinate Cordinate
 	View      string
+	Width     int
+	Height    int
 }
 
 func (m *Model) constructor() {
-	viewWidth := Width - len(m.View)/2
-	viewHeight := func() int {
+	m.Width = Width - len(m.View)/2
+	m.Height = func() int {
 		var n int
 		for _, b := range m.View {
 			if b == '\n' {
@@ -45,12 +47,12 @@ func (m *Model) constructor() {
 		return n
 	}()
 
-	m.Cordinate.X = viewWidth - (MaxX - m.Cordinate.X)
-	m.Cordinate.Y = viewHeight - (MaxY + m.Cordinate.Y)
+	m.Cordinate.X = m.Height - (MaxX - m.Cordinate.X)
+	m.Cordinate.Y = m.Width - (MaxY + m.Cordinate.Y)
 }
 
 type Row struct {
-	Columns  []byte
+	Columns   []byte
 	hasObject bool
 }
 

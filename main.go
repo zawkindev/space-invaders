@@ -12,7 +12,7 @@ func main() {
 	s.Render(helloText)
 
 	for {
-		time.Sleep(16 * time.Millisecond)
+		time.Sleep(16 * time.Millisecond) // 60 fps = 1:60
 		s.Render(helloText)
 	}
 }
