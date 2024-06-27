@@ -27,7 +27,8 @@ type position struct {
 
 type Model struct {
 	Cordinate Cordinate
-	View      string
+	Content   string
+	View      []Row
 	Width     int
 	Height    int
 }
@@ -35,7 +36,7 @@ type Model struct {
 func (m *Model) constructor() {
 	m.Height, m.Width = func() (int, int) {
 		var h, w, tempW int
-		for _, b := range m.View {
+		for _, b := range m.Content {
 			tempW++
 			if b == '\n' {
 				if w < tempW-1 {
@@ -46,7 +47,9 @@ func (m *Model) constructor() {
 			}
 		}
 		if h == 0 {
-			return 1, len(m.View)
+			return 1, len(m.Content)
+		} else if h == 1 && m.Content[len(m.Content)-1] != '\n' {
+			return h + 1, w
 		}
 		return h, w
 	}()
@@ -153,22 +156,25 @@ func Render(models ...Model) {
 		matrix[i].Columns = make([]byte, Width)
 	}
 
-	// fmt.Printf("Matrix height: %d\n", len(matrix))
-	// fmt.Printf("Screen height: %d\n", Height)
-
 	for _, m := range models {
 		m.constructor()
+
+		fmt.Println("width & height of model: ", m.Width, m.Height)
+
 		for i := 0; i < m.Height; i++ {
 			row := m.Cordinate.Y - m.Height/2 + i
 			matrix[row].hasObject = true
+
+			fmt.Println("current row: ", row)
+
 			for j := 0; j < m.Width; j++ {
 				column := m.Cordinate.X - m.Width/2 + j
-				matrix[row].Columns[column] = m.View[j]
+				matrix[row].Columns[column] = m.Content[j]
+
+				fmt.Println("current column: ", column)
 			}
 		}
 	}
 
 	printScreen(&matrix)
-	// fmt.Print(matrix)
-
 }
