@@ -2,6 +2,9 @@ package render
 
 import (
 	"fmt"
+	"os"
+	"os/exec"
+	"runtime"
 	g "space-invaders/game"
 )
 
@@ -11,25 +14,37 @@ const Height = 20 // screen height
 func Render(enemies []g.Enemey) {
 
 	// make and fill the matrix to represent empty screen
-	var matrix [Width][Height]byte
-	for i := 0; i < Width; i++ {
-		for j := 0; j < Height; j++ {
-			matrix[i][j] = ' '
+	var matrix [Height][Width]byte
+	for i := 0; i < Height; i++ {
+		for j := 0; j < Width; j++ {
+			matrix[i][j] = '+'
 		}
 	}
 
 	// place enemies to matrix
 	for _, e := range enemies {
-		matrix[e.X][e.Y] = 'E'
+		matrix[e.Y][e.X] = 'E'
 	}
 
 	// print the matrix
-	for i := 0; i < Width; i++ {
+	for i := 0; i < Height; i++ {
 		line := ""
-		for j := 0; j < Height; j++ {
+		for j := 0; j < Width; j++ {
 			line += string(matrix[i][j])
 		}
 		fmt.Println(line)
 	}
+}
 
+func ClearScreen() {
+	var cmd *exec.Cmd
+	switch runtime.GOOS {
+	case "windows":
+		cmd = exec.Command("cmd", "/c", "cls")
+	default:
+		cmd = exec.Command("clear")
+	}
+
+	cmd.Stdout = os.Stdout
+	cmd.Run()
 }
