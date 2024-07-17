@@ -1,9 +1,9 @@
 package game
 
 type Player struct {
-	x, y int
+	X, Y int
 }
 
 type Enemey struct {
-	x, y int
+	X, Y int
 }
