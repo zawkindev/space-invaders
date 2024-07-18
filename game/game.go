@@ -5,11 +5,9 @@ type Player struct {
 }
 
 type Enemy struct {
-	X, Y  int
-	alive bool
+	X, Y int
 }
 
 type Bullet struct {
-	X, Y   int
-	Active bool
+	X, Y int
 }

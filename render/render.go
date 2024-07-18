@@ -13,7 +13,7 @@ const Height = 20 // screen height
 
 func Render(player g.Player, enemies []g.Enemy, bullets []g.Bullet) {
 
-	// make and fill the matrix to represent empty screen
+	// create and fill the matrix to represent empty screen
 	var matrix [Height][Width]byte
 	for i := 0; i < Height; i++ {
 		for j := 0; j < Width; j++ {

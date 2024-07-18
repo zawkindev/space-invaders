@@ -24,12 +24,23 @@ func main() {
 
 	// create bullets
 	bullets := make([]g.Bullet, 0)
-	bullets = append(bullets, g.Bullet{X: rand.Intn(10), Y: 15, Active: true})
 
 	// game loop
 	for {
+		bullets = append(bullets, g.Bullet{X: player.X, Y: player.Y - 1})
+
+		activeBullets := bullets[:0] // using the same underlying array to avoid allocations
+		for i := range bullets {
+			b := &bullets[i]
+			if b.Y > 0 {
+				b.Y -= 1
+				activeBullets = append(activeBullets, *b)
+			}
+		}
+		bullets = activeBullets
+
 		r.Render(player, enemies, bullets)
-		time.Sleep(17 * time.Millisecond)
+		time.Sleep(300 * time.Millisecond)
 		r.ClearScreen()
 	}
 }
