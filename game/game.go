@@ -4,6 +4,6 @@ type Player struct {
 	X, Y int
 }
 
-type Enemey struct {
+type Enemy struct {
 	X, Y int
 }

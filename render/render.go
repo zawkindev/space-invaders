@@ -11,13 +11,13 @@ import (
 const Width = 40  // screen width
 const Height = 20 // screen height
 
-func Render(enemies []g.Enemey, player g.Player) {
+func Render(enemies []g.Enemy, player g.Player) {
 
 	// make and fill the matrix to represent empty screen
 	var matrix [Height][Width]byte
 	for i := 0; i < Height; i++ {
 		for j := 0; j < Width; j++ {
-			matrix[i][j] = '+'
+			matrix[i][j] = '.'
 		}
 	}
 
