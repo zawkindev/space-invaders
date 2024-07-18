@@ -11,7 +11,7 @@ import (
 const Width = 40  // screen width
 const Height = 20 // screen height
 
-func Render(enemies []g.Enemey) {
+func Render(enemies []g.Enemey, player g.Player) {
 
 	// make and fill the matrix to represent empty screen
 	var matrix [Height][Width]byte
@@ -21,10 +21,12 @@ func Render(enemies []g.Enemey) {
 		}
 	}
 
-	// place enemies to matrix
+	// place enemies and player to matrix
 	for _, e := range enemies {
 		matrix[e.Y][e.X] = 'E'
 	}
+
+	matrix[player.Y][player.X] = 'P'
 
 	// print the matrix
 	for i := 0; i < Height; i++ {

@@ -15,6 +15,12 @@ func main() {
 		enemies[i] = g.Enemey{X: r.Intn(20), Y: 0}
 	}
 
-	r.Render(enemies)
+	player := g.Player{X: 20, Y: 19}
+
+	for {
+		r.Render(enemies, player)
+		time.Sleep(17 * time.Millisecond)
+		r.ClearScreen()
+	}
 
 }
