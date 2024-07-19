@@ -16,19 +16,24 @@ func main() {
 	player := g.Player{X: 20, Y: 19}
 
 	// create enemies
-	enemyNum := random.Intn(5)
-	enemies := make([]g.Enemy, enemyNum)
-	for i := 0; i < enemyNum; i++ {
-		enemies[i] = g.Enemy{X: random.Intn(20), Y: 0, IsAlive: true, Moved: false}
-	}
+	enemies := make([]g.Enemy, 0)
 
 	// create bullets
 	bullets := make([]g.Bullet, 0)
 
 	// game loop
 	for {
+
+		// shoot bullets
 		bullets = append(bullets, g.Bullet{X: player.X, Y: player.Y - 1, IsActive: true})
 
+		// add random enemies at random locations
+		enemyNum := random.Intn(5)
+		for i := 0; i < enemyNum; i++ {
+			enemies = append(enemies, g.Enemy{X: random.Intn(r.Width-1), Y: 0, IsAlive: true, Moved: false})
+		}
+
+		// collision detection
 		for i := range bullets {
 			b := &bullets[i]
 			b.Y -= 1
