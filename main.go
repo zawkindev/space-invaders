@@ -19,7 +19,7 @@ func main() {
 	enemyNum := random.Intn(5)
 	enemies := make([]g.Enemy, enemyNum)
 	for i := 0; i < enemyNum; i++ {
-		enemies[i] = g.Enemy{X: random.Intn(20), Y: 0}
+		enemies[i] = g.Enemy{X: random.Intn(20), Y: 0, IsAlive: true, Moved: false}
 	}
 
 	// create bullets
@@ -27,20 +27,38 @@ func main() {
 
 	// game loop
 	for {
-		bullets = append(bullets, g.Bullet{X: player.X, Y: player.Y - 1})
+		bullets = append(bullets, g.Bullet{X: player.X, Y: player.Y - 1, IsActive: true})
 
-		activeBullets := bullets[:0] // using the same underlying array to avoid allocations
 		for i := range bullets {
 			b := &bullets[i]
-			if b.Y > 0 {
-				b.Y -= 1
-				activeBullets = append(activeBullets, *b)
+			b.Y -= 1
+			for j := range enemies {
+				e := &enemies[j]
+				if !e.Moved {
+					e.Y += 1
+					e.Moved = true
+				}
+				switch {
+				case e.X == b.X && e.Y == b.Y:
+					e.IsAlive = false
+					b.IsActive = false
+
+				case e.Y > r.Height-2:
+					e.IsAlive = false
+
+				case b.Y < 1:
+					b.IsActive = false
+				}
 			}
 		}
-		bullets = activeBullets
+
+		for i := range enemies {
+			e := &enemies[i]
+			e.Moved = false
+		}
 
 		r.Render(player, enemies, bullets)
-		time.Sleep(300 * time.Millisecond)
+		time.Sleep(1000 * time.Millisecond)
 		r.ClearScreen()
 	}
 }
