@@ -6,10 +6,11 @@ import (
 	g "space-invaders/game"
 	r "space-invaders/render"
 	"time"
+
+	"github.com/nsf/termbox-go"
 )
 
 func main() {
-
 	// define Size
 	Height, Width, err := r.GetTerminalSize()
 	if err != nil {
@@ -29,15 +30,35 @@ func main() {
 	bullets := make([]g.Bullet, 0)
 
 	// create tickers
-	enemyMoveTicker := time.NewTicker(300 * time.Millisecond)
+	enemyMoveTicker := time.NewTicker(200 * time.Millisecond)
 	gameLoopTicker := time.NewTicker(60 * time.Millisecond)
 	defer enemyMoveTicker.Stop()
 	defer gameLoopTicker.Stop()
+
+	// initialize keyboard
+	if err := termbox.Init(); err != nil {
+		panic(err)
+	}
+	defer termbox.Close()
+
+	// create channel for key event
+	PressedKey := make(chan termbox.Key, 10)
+	go func() {
+		for {
+			if ev := termbox.PollEvent(); ev.Type == termbox.EventKey {
+				PressedKey <- ev.Key
+			}
+		}
+	}()
 
 	// game loop
 	for {
 		select {
 		case <-gameLoopTicker.C:
+			// clear screen
+			r.ClearScreen()
+
+			// define screen size
 			Height, Width, err = r.GetTerminalSize()
 			if err != nil {
 				log.Panic(err)
@@ -66,9 +87,9 @@ func main() {
 				}
 			}
 
+			// render objects
 			r.Render(player, enemies, bullets, Width, Height)
-			time.Sleep(60 * time.Millisecond)
-			r.ClearScreen()
+			time.Sleep(50 * time.Millisecond)
 
 		case <-enemyMoveTicker.C:
 			// add random enemies at random locations
@@ -86,7 +107,30 @@ func main() {
 				}
 			}
 			enemies = activeEnemies
-		}
 
+		case key := <-PressedKey:
+			if key == termbox.KeyEsc {
+				return
+			}
+			switch key {
+			case termbox.KeyArrowLeft:
+				if player.X > 0 {
+					player.X -= 1
+				}
+			case termbox.KeyArrowRight:
+				if player.X < Width-1 {
+					player.X += 1
+				}
+			case termbox.KeyArrowUp:
+				if player.Y > 0 {
+					player.Y -= 1
+				}
+			case termbox.KeyArrowDown:
+				if player.Y < Height-1 {
+					player.Y += 1
+				}
+			default:
+			}
+		}
 	}
 }
