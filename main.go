@@ -30,7 +30,7 @@ func main() {
 		// add random enemies at random locations
 		enemyNum := random.Intn(5)
 		for i := 0; i < enemyNum; i++ {
-			enemies = append(enemies, g.Enemy{X: random.Intn(r.Width-1), Y: 0, IsAlive: true, Moved: false})
+			enemies = append(enemies, g.Enemy{X: random.Intn(r.Width - 1), Y: 0, IsAlive: true, Moved: false})
 		}
 
 		// collision detection
@@ -57,10 +57,16 @@ func main() {
 			}
 		}
 
+		activeEnemies := enemies[:0]
 		for i := range enemies {
 			e := &enemies[i]
-			e.Moved = false
+			if e.IsAlive {
+				e.Moved = false
+				activeEnemies = append(activeEnemies, *e)
+			}
 		}
+
+		enemies = activeEnemies
 
 		r.Render(player, enemies, bullets)
 		time.Sleep(1000 * time.Millisecond)
