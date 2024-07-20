@@ -36,14 +36,14 @@ func Render(player g.Player, enemies []g.Enemy, bullets []g.Bullet, Width, Heigh
 
 	// place enemies to matrix
 	for _, e := range enemies {
-		if e.IsAlive {
+		if e.IsAlive && e.Y < Height {
 			matrix[e.Y][e.X] = 'E'
 		}
 	}
 
 	// place bullets to matrix
 	for _, b := range bullets {
-		if b.IsActive {
+		if b.IsActive && b.Y > 0 {
 			matrix[b.Y][b.X] = '|'
 		}
 	}

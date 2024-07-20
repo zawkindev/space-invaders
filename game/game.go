@@ -7,6 +7,7 @@ type Player struct {
 type Enemy struct {
 	X, Y    int
 	IsAlive bool
+	Moved   bool
 }
 
 type Bullet struct {
