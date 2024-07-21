@@ -32,8 +32,10 @@ func main() {
 
 	// create tickers
 	enemyMoveTicker := time.NewTicker(500 * time.Millisecond)
-	gameLoopTicker := time.NewTicker(60 * time.Millisecond)
+	bulletMoveTicker := time.NewTicker(60 * time.Millisecond)
+	gameLoopTicker := time.NewTicker(34 * time.Millisecond)
 	defer enemyMoveTicker.Stop()
+	defer bulletMoveTicker.Stop()
 	defer gameLoopTicker.Stop()
 
 	// initialize keyboard
@@ -43,7 +45,7 @@ func main() {
 	defer termbox.Close()
 
 	// create channel for key event
-	PressedKey := make(chan termbox.Key, 10)
+	PressedKey := make(chan termbox.Key)
 	go func() {
 		for {
 			if ev := termbox.PollEvent(); ev.Type == termbox.EventKey {
@@ -92,17 +94,16 @@ func main() {
 				log.Panic(err)
 			}
 
+			// render objects
+			r.Render(player, enemies, bullets, Width, Height)
+
+		case <-bulletMoveTicker.C:
 			// shoot bullets
 			bullets = append(bullets, g.Bullet{X: player.X, Y: player.Y - 1, IsActive: true})
-
-			// collision detection && move bullets
 			for i := range bullets {
 				b := &bullets[i]
 				b.Y -= 1
 			}
-
-			// render objects
-			r.Render(player, enemies, bullets, Width, Height)
 
 		case <-enemyMoveTicker.C:
 			// add random enemies at random locations
