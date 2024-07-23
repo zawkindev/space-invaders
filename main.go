@@ -1,14 +1,15 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"math"
 	"math/rand"
+	"os"
 	g "space-invaders/game"
+	"space-invaders/keyboard"
 	r "space-invaders/render"
 	"time"
-
-	"github.com/nsf/termbox-go"
 )
 
 func main() {
@@ -33,23 +34,30 @@ func main() {
 	// create tickers
 	enemyMoveTicker := time.NewTicker(500 * time.Millisecond)
 	bulletMoveTicker := time.NewTicker(60 * time.Millisecond)
-	gameLoopTicker := time.NewTicker(34 * time.Millisecond)
+	gameLoopTicker := time.NewTicker(17 * time.Millisecond)
 	defer enemyMoveTicker.Stop()
 	defer bulletMoveTicker.Stop()
 	defer gameLoopTicker.Stop()
 
 	// initialize keyboard
-	if err := termbox.Init(); err != nil {
-		panic(err)
-	}
-	defer termbox.Close()
+	keyboard.ResetRawMode()
+	defer keyboard.ResetRawMode()
 
 	// create channel for key event
-	PressedKey := make(chan termbox.Key)
+	PressedKey := make(chan string)
 	go func() {
+		var buf [3]byte
 		for {
-			if ev := termbox.PollEvent(); ev.Type == termbox.EventKey {
-				PressedKey <- ev.Key
+			n, err := os.Stdin.Read(buf[:])
+			if err != nil {
+				log.Fatal(err)
+				return
+			}
+			fmt.Println(buf)
+			if n == 1 && buf[0] == keyboard.KeyEsc[0] {
+				PressedKey <- keyboard.KeyEsc
+			} else if n == 3 && buf[0] == keyboard.KeyEsc[0] && buf[1] == '[' {
+				PressedKey <- string(buf[:n])
 			}
 		}
 	}()
@@ -118,23 +126,23 @@ func main() {
 			}
 
 		case key := <-PressedKey:
-			if key == termbox.KeyEsc {
+			if key == keyboard.KeyEsc {
 				return
 			}
 			switch key {
-			case termbox.KeyArrowLeft:
+			case keyboard.KeyArrowLeft:
 				if player.X > 0 {
 					player.X -= 1
 				}
-			case termbox.KeyArrowRight:
+			case keyboard.KeyArrowRight:
 				if player.X < Width-1 {
 					player.X += 1
 				}
-			case termbox.KeyArrowUp:
+			case keyboard.KeyArrowUp:
 				if player.Y > 0 {
 					player.Y -= 1
 				}
-			case termbox.KeyArrowDown:
+			case keyboard.KeyArrowDown:
 				if player.Y < Height-1 {
 					player.Y += 1
 				}
